@@ -51,8 +51,6 @@ wsServer.on("connection", (socket: WebSocket) => {
         socket.send("ping");
         tm = setTimeout(() => {
             socket.close();
-            users = [];
-            refreshClients()
         }, 3000)
     };
     setInterval(ping, 60000);
@@ -159,7 +157,7 @@ wsServer.on("connection", (socket: WebSocket) => {
     // Create unique identifier to the client
     // construct connection message and return generated pid
     const message = `connected_${uid}`;
-
+    
     // Send message to client through socket
     socket.send(message);
     users.forEach((user, i) => {
@@ -179,12 +177,10 @@ app.use((inRequest: Request, inResponse: Response, inNext: NextFunction) => {
     inResponse.header("Access-Control-Allow-Headers", "Origin, X-Requested-With.Content-Type,Accept");
     inNext();
 });
-
 app.get("/api/cards", async (inRequest: Request, inResponse: Response) => {
     inResponse.type("json");
     const cards: Card[] = await CardDataAccess.getDataAccess().getCards();
     inResponse.json(cards);
-    // CardDataAccess.getDataAccess().addCard(new Card(-1));
 });
 
 app.get("/api/storyQueue", async (inRequest: Request, inResponse: Response) => {
